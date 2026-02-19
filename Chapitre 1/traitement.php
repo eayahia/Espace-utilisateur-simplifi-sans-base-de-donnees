@@ -1,5 +1,4 @@
 <?php
-// fichier : traitement.php
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nom = trim($_POST['nom']);
     $email = trim($_POST['email']);

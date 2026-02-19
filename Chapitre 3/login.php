@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nom = trim($_POST['nom']);
     if (!empty($nom)) {
         $_SESSION['utilisateur'] = $nom;
-        header('Location: profil.php');
+        header('Location: profil.php'); 
         exit;
     } else {
         $message = "Veuillez entrer votre nom.";

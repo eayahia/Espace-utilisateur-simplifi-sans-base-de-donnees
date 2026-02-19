@@ -4,3 +4,4 @@ if (isset($_COOKIE['utilisateur'])) {
 } else {
     echo "Aucun cookie trouvé.";
 }
+?>
