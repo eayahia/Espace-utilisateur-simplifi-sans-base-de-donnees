@@ -7,8 +7,8 @@
 
     $users = [
 
-        ["name" => "Oussama",
-         "password" => "admin123",
+        ["name" => "Yahia",
+         "password" => "yahia123",
          "role" => "administrateur",
          "active" => true
          ],
