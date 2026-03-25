@@ -1,59 +1,65 @@
 <?php
-if (isset($_POST['save'])) {
-    $expire = time() + 3600; 
-    setcookie('cookie_user', $_POST['user'], $expire);
-    setcookie('cookie_color', $_POST['color'], $expire);
-    setcookie('cookie_lang', $_POST['lang'], $expire);
-    setcookie('cookie_last_update_date', date('d/m/Y H:i:s'), $expire);
-    header("Location: " . $_SERVER['PHP_SELF']); 
-    exit();
-}
+$dict = [
+    'fr' => ['hi' => "Bienvenue", 'M' => "Monsieur", 'F' => "Madame", 'name' => "Nom", 'save' => "Enregistrer", 'reset' => "Effacer"],
+    'en' => ['hi' => "Welcome",   'M' => "Mr.",     'F' => "Ms.",     'name' => "Name", 'save' => "Save",        'reset' => "Reset"],
+    'ar' => ['hi' => "مرحباً",    'M' => "سيد",      'F' => "سيدة",    'name' => "الاسم", 'save' => "حفظ",        'reset' => "مسح"]
+];
 
-if (isset($_POST['reset'])) {
-    $past = time() - 3600;
-    setcookie('cookie_user', '', $past);
-    setcookie('cookie_color', '', $past);
-    setcookie('cookie_lang', '', $past);
-    setcookie('cookie_last_update_date', '', $past);
+if (isset($_POST['ok'])) {
+    $exp = time() + 3600;
+    setcookie('lang',  $_POST['lg'], $exp, "/");
+    setcookie('color', $_POST['cl'], $exp, "/");
+    setcookie('genre', $_POST['gn'], $exp, "/");
+    setcookie('user',  $_POST['un'], $exp, "/");
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
 
-$bg_color = $_COOKIE['cookie_color'] ?? '#ffffff';
-$lang = $_COOKIE['cookie_lang'] ?? 'fr';
-$user_name = $_COOKIE['cookie_user'] ?? 'Invité';
-$last_visit = $_COOKIE['cookie_last_update_date'] ?? 'Aucune (Première visite)';
+if (isset($_POST['clear'])) {
+    setcookie('lang',  '', time() - 3600, "/");
+    setcookie('color', '', time() - 3600, "/");
+    setcookie('genre', '', time() - 3600, "/");
+    setcookie('user',  '', time() - 3600, "/");
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
 
-$welcome_msg = ($lang == 'en') ? "Welcome" : "Bienvenue";
+$L = $_COOKIE['lang']  ?? 'fr';
+$C = $_COOKIE['color'] ?? '#ffffff';
+$G = $_COOKIE['genre'] ?? 'M';
+$U = $_COOKIE['user']  ?? 'Guest';
+
+$txt = $dict[$L];
+$title = ($G == 'M') ? $txt['M'] : $txt['F'];
 ?>
 
 <!DOCTYPE html>
-<html lang="<?php echo $lang; ?>">
+<html lang="<?= $L ?>" dir="<?= $L == 'ar' ? 'rtl' : 'ltr' ?>">
 <head>
     <meta charset="UTF-8">
-    <title>Préférences Utilisateur</title>
 </head>
-<body style="background-color: <?php echo $bg_color; ?>;">
-
-    <h1><?php echo "$welcome_msg, $user_name"; ?></h1>
-    <p>Dernière visite enregistrée : <strong><?php echo $last_visit; ?></strong></p>
-
-    <hr>
+<body style="background: <?= $C ?>;"> <h1> <?= $txt['hi'] . " " . $title . " " . htmlspecialchars($U) ?> </h1>
 
     <form method="POST">
-        <label>Nom :</label> 
-        <input type="text" name="user" value="<?php echo ($user_name != 'Invité') ? $user_name : ''; ?>" required><br><br>
+        <label><?= $txt['name'] ?>:</label>
+        <input type="text" name="un" value="<?= $U != 'Guest' ? htmlspecialchars($U) : '' ?>" required>
+        <br><br>
+
+        <input type="radio" name="gn" value="M" <?= $G == 'M' ? 'checked' : '' ?>> <?= $txt['M'] ?>
+        <input type="radio" name="gn" value="F" <?= $G == 'F' ? 'checked' : '' ?>> <?= $txt['F'] ?>
+        <br><br>
+
+        <select name="lg">
+            <option value="fr" <?= $L == 'fr' ? 'selected' : '' ?>>Français</option>
+            <option value="en" <?= $L == 'en' ? 'selected' : '' ?>>English</option>
+            <option value="ar" <?= $L == 'ar' ? 'selected' : '' ?>>العربية</option>
+        </select>
         
-        <label>Couleur de fond :</label> 
-        <input type="color" name="color" value="<?php echo $bg_color; ?>"><br><br>
-        
-        <label>Langue :</label> 
-        <input type="radio" name="lang" value="fr" <?php if($lang == 'fr') echo 'checked'; ?>> Français
-        <input type="radio" name="lang" value="en" <?php if($lang == 'en') echo 'checked'; ?>> Anglais<br><br>
-        
-        <button type="submit" name="save">Enregistrer mes choix</button>
-        
-        <button type="submit" name="reset" >Reinitialiser </button>
+        <input type="color" name="cl" value="<?= $C ?>"> 
+        <br><br>
+
+        <button type="submit" name="ok"> <?= $txt['save'] ?> </button>
+        <button type="submit" name="clear"> <?= $txt['reset'] ?> </button>
     </form>
 
 </body>
